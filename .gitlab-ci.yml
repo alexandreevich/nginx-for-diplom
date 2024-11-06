@@ -14,13 +14,12 @@ build-image:
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
     - docker build -t $DOCKER_IMAGE:latest .
     - docker push $DOCKER_IMAGE:latest
-  privileged: true
 
   only:
     - main
   tags:
     - my-runner-tag
-
+  
 deploy-to-k8s:
   stage: deploy
   image: bitnami/kubectl:latest
