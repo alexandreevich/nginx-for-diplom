@@ -16,6 +16,8 @@ build-image:
     - docker push $DOCKER_IMAGE:latest
   only:
     - main
+  tags:
+    - my-runner-tag
 
 deploy-to-k8s:
   stage: deploy
