@@ -26,8 +26,6 @@ deploy-to-k8s:
   script:
     - kubectl apply -f k8s/deployment.yaml
     - kubectl apply -f k8s/nginx-service.yml
-  only:
-    - main
-    - tags
+
   tags:
     - my-runner-tag
