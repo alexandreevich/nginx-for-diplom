@@ -11,9 +11,7 @@ build-image:
   services:
     - docker:dind
   script:
-    - winpty docker login -u "$DOCKER_USERNAME" -p "$DOCKER_ACCESS_TOKEN"
     - docker build -t $DOCKER_IMAGE:latest .
-    - docker push $DOCKER_IMAGE:latest
 
   only:
     - main
