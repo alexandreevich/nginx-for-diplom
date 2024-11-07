@@ -27,3 +27,4 @@ deploy-to-k8s:
     - kubectl apply -f k8s/deployment.yaml
   only:
     - main
+    - tags
