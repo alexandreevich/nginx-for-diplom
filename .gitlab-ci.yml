@@ -26,8 +26,7 @@ deploy-to-k8s:
     name: bitnami/kubectl:latest
     entrypoint: [""] 
   script:
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/nginx-service.yml
+    - cd k8s && kubectl apply -f deployment.yaml
 
   tags:
     - my-runner-tag
