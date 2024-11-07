@@ -2,7 +2,7 @@ stages:
   - build
   - deploy
 
-variables:
+# variables:
 #   DOCKER_IMAGE: "alexandreevich/nginx-image" 
 
 
