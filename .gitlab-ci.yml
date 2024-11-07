@@ -25,6 +25,9 @@ deploy-to-k8s:
   image: bitnami/kubectl:latest
   script:
     - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/nginx-service.yml
   only:
     - main
     - tags
+  tags:
+    - my-runner-tag
