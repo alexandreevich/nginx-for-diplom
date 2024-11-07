@@ -22,8 +22,9 @@ build-image:
   
 deploy-to-k8s:
   stage: deploy
-  image: bitnami/kubectl:latest
-  entrypoint: [""]
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""] 
   script:
     - kubectl apply -f k8s/deployment.yaml
     - kubectl apply -f k8s/nginx-service.yml
