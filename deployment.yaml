@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-static
+  labels:
+    app: nginx-static
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-staticp
+  template:
+    metadata:
+      labels:
+        app: nginx-static
+    spec:
+      containers:
+        - name: nginx
+          image: ${DOCKER_IMAGE_NAME}
