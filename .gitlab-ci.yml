@@ -27,6 +27,8 @@ deploy-to-k8s:
     name: bitnami/kubectl:latest
     entrypoint: [""] 
   script:
+    - echo "$KUBECONFIG" > kubeconfig
+    - export KUBECONFIG=$(pwd)/kubeconfig
     - kubectl apply -f k8s/nginx-deployment.yml
     - kubectl apply -f k8s/nginx-service.yml
 
