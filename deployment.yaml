@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: ${$DOCKER_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}
+          image: "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_TAG"
           ports:
             - containerPort: 80
