@@ -11,7 +11,10 @@ build-image:
   stage: build
   image: docker:latest
   services:
-    - docker:dind
+    - name: docker:20.10.7-dind
+      alias: docker
+  before_script:
+    - docker info 
   script:
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_ACCESS_TOKEN"
     - docker build -t $DOCKER_IMAGE:latest .
