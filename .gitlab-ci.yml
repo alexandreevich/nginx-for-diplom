@@ -4,40 +4,36 @@ stages:
 
 variables:
   IMAGE_NAME: "nginx-image"
-  DOCKER_REGISTRY_IMAGE: "$DOCKER_USERNAME/$IMAGE_NAME"
-  DOCKER_IMAGE_TAG: "${CI_COMMIT_TAG:-latest}"
+  DOCKER_REGISTRY_IMAGE: $DOCKER_USERNAME/$IMAGE_NAME
+  DOCKER_IMAGE_TAG: $CI_COMMIT_SHORT_SHA  
 
 image: docker:latest
 services:
   - docker:dind
 
-# Stage для сборки Docker-образа
 build:
   stage: build
   script:
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_ACCESS_TOKEN"
-    # Сборка образа с тегом на основе CI_COMMIT_TAG
     - docker build --no-cache -t "${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}" .
-    # Пуш образа с тегом и как "latest"
     - docker tag "${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}" "${DOCKER_REGISTRY_IMAGE}:latest"
     - docker push "${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}"
     - docker push "${DOCKER_REGISTRY_IMAGE}:latest"
   only:
-    - tags  # Запускаем сборку только при создании тега
+    - main
   tags:
     - my-runner-tag
 
-# Stage для деплоя в Kubernetes
 deploy:
   stage: deploy
   image:
     name: bitnami/kubectl:latest
-    entrypoint: [""]
+    entrypoint: [""] 
   script:
-    # Обновление Deployment с использованием образа с тегом CI_COMMIT_TAG
-    - kubectl set image deployment/nginx-static nginx="${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}"
+    - kubectl apply -f deployment.yaml  
   only:
-    - tags  # Запускаем деплой только при создании тега
+    - tags  
+    - main
+  when: manual
   tags:
     - my-runner-tag
-  when: manual  # Опционально: ручной запуск деплоя
