@@ -16,8 +16,10 @@ build:
   script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_ACCESS_TOKEN
     - docker pull $DOCKER_REGISTRY_IMAGE:latest || true
-    - docker build -t "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" .
-    - docker tag "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "$DOCKER_REGISTRY_IMAGE:latest"  
+    - echo "Building image with tag: $DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+    - docker build --no-cache -t "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" .
+    - docker run --rm "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" ls /usr/share/nginx/html  # Проверка содержимого
+    - docker tag "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "$DOCKER_REGISTRY_IMAGE:latest"
     - docker push "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
     - docker push "$DOCKER_REGISTRY_IMAGE:latest"
   only:
@@ -31,6 +33,10 @@ deploy:
     name: bitnami/kubectl:latest
     entrypoint: [""] 
   script:
+    - export IMAGE_TAG="$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"  # Определяем текущий тег образа
+    - echo "Deploying image $IMAGE_TAG"
+    # Подставляем тег в файл deployment.yml
+    - sed -i "s|image: .*$|image: $IMAGE_TAG|" deployment.yml
     - kubectl apply -f deployment.yaml  
   only:
     - tags  
