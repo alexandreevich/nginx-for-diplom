@@ -4,7 +4,8 @@ stages:
 
 variables:
   IMAGE_NAME: "nginx-image"
-  DOCKER_IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+  DOCKER_REGISTRY_IMAGE: $DOCKER_USERNAME/$IMAGE_NAME
+  DOCKER_IMAGE_TAG: $CI_COMMIT_SHORT_SHA  
 
 image: docker:latest
 services:
@@ -14,14 +15,15 @@ build:
   stage: build
   script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_ACCESS_TOKEN
-    - docker build -t "$DOCKER_IMAGE_NAME" .
-    - docker push "$DOCKER_IMAGE_NAME"
+    - docker pull $DOCKER_REGISTRY_IMAGE:latest || true
+    - docker build -t "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" .
+    - docker tag "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "$DOCKER_REGISTRY_IMAGE:latest"  
+    - docker push "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+    - docker push "$DOCKER_REGISTRY_IMAGE:latest"
   only:
     - main
   tags:
     - my-runner-tag
-
-    
 
 deploy:
   stage: deploy
@@ -29,9 +31,10 @@ deploy:
   services:
     - docker:dind
   script:
-    - kubectl apply -f deployment.yml 
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_ACCESS_TOKEN
+    - docker pull "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" || true
+    - kubectl apply -f deployment.yml  
   only:
     - tags  
   tags:
     - my-runner-tag
-
