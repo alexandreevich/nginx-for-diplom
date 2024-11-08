@@ -27,14 +27,11 @@ build:
 
 deploy:
   stage: deploy
-  image: docker:latest
-  services:
-    - docker:dind
   script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_ACCESS_TOKEN
-    - docker pull "$DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" || true
     - kubectl apply -f deployment.yml  
   only:
     - tags  
+    - main
+  when: manual
   tags:
     - my-runner-tag
