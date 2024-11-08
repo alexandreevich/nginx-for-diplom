@@ -8,7 +8,7 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: nginx-staticp
+      app: nginx-static
   template:
     metadata:
       labels:
@@ -17,3 +17,5 @@ spec:
       containers:
         - name: nginx
           image: ${DOCKER_IMAGE_NAME}
+          ports:
+            - containerPort: 80
