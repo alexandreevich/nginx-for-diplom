@@ -3,7 +3,7 @@ stages:
   - deploy
 
 variables:
-  IMAGE_NAME: "alexandreevich/nginx-image"
+  IMAGE_NAME: "nginx-image"
   DOCKER_IMAGE_TAG: $DOCKER_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
   DOCKER_REGISTRY_IMAGE: $DOCKER_USERNAME/$IMAGE_NAME
 
