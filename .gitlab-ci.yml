@@ -18,7 +18,7 @@ build:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_ACCESS_TOKEN
     - docker pull $DOCKER_REGISTRY_IMAGE:latest || true
     - >
-      docker build
+      docker buildx build
       --pull
       --cache-from $DOCKER_REGISTRY_IMAGE:latest
       --label "org.opencontainers.image.title=$CI_PROJECT_TITLE"
@@ -27,14 +27,15 @@ build:
       --label "org.opencontainers.image.revision=$CI_COMMIT_SHA"
       --label "org.opencontainers.image.version=$CI_COMMIT_REF_NAME"
       --tag $DOCKER_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG  # Используем тег из переменной
-      .
+      .  # Контекст сборки (текущая директория)
     - docker tag $DOCKER_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_REGISTRY_IMAGE:latest  # Тегируем также как latest
     - docker push $DOCKER_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG
     - docker push $DOCKER_REGISTRY_IMAGE:latest
   only:
-    - main  # Строим только для основной ветки (можно настроить на любые другие ветки, если нужно)
+    - main
   tags:
     - my-runner-tag
+
 
 # Стадия деплоя
 deploy:
