@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: ${DOCKER_IMAGE_NAME}:latest 
+          # Временно указываем образ nginx
+          image: nginx:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
