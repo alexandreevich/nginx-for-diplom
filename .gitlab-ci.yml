@@ -5,12 +5,13 @@ stages:
 variables:
   IMAGE_NAME: "nginx-image"
   DOCKER_REGISTRY_IMAGE: $DOCKER_USERNAME/$IMAGE_NAME
-  DOCKER_IMAGE_TAG: $CI_COMMIT_TAG
+  DOCKER_IMAGE_TAG: ${CI_COMMIT_TAG:-latest}  # Используем тег commit или latest по умолчанию
 
 image: docker:latest
 services:
   - docker:dind
 
+# Стадия сборки
 build:
   stage: build
   script:
@@ -25,30 +26,27 @@ build:
       --label "org.opencontainers.image.created=$CI_JOB_STARTED_AT"
       --label "org.opencontainers.image.revision=$CI_COMMIT_SHA"
       --label "org.opencontainers.image.version=$CI_COMMIT_REF_NAME"
-      --tag $DOCKER_REGISTRY_IMAGE:$CI_COMMIT_TAG
+      --tag $DOCKER_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG  # Используем тег из переменной
       .
-    - docker tag $DOCKER_REGISTRY_IMAGE:$CI_COMMIT_TAG $DOCKER_REGISTRY_IMAGE:latest
-    - docker push $DOCKER_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    - docker tag $DOCKER_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_REGISTRY_IMAGE:latest  # Тегируем также как latest
+    - docker push $DOCKER_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG
     - docker push $DOCKER_REGISTRY_IMAGE:latest
   only:
-    - main
+    - main  # Строим только для основной ветки (можно настроить на любые другие ветки, если нужно)
   tags:
     - my-runner-tag
 
-    
-
+# Стадия деплоя
 deploy:
   stage: deploy
   image: docker:latest
   services:
     - docker:dind
   script:
-    # Логин в Docker registry
     - docker login -u $DOCKER_USERNAME -p $DOCKER_ACCESS_TOKEN
-    - docker pull $DOCKER_REGISTRY_IMAGE:$CI_COMMIT_TAG || true
+    - docker pull $DOCKER_REGISTRY_IMAGE:$CI_COMMIT_TAG || true  # Берем образ с тегом коммита или latest
     - kubectl apply -f k8s/nginx-deployment.yml  # Применяем деплой
   only:
     - tags  # Деплой только для тегов
   tags:
     - my-runner-tag
-
