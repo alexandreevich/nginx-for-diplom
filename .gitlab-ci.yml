@@ -2,8 +2,8 @@ stages:
   - build
   - deploy
 
-# variables:
-#   DOCKER_IMAGE: "alexandreevich/nginx-image" 
+variables:
+  DOCKER_IMAGE: "alexandreevich/nginx-image" 
 
 
 build-image:
@@ -21,14 +21,14 @@ build-image:
   tags:
     - my-runner-tag
   
-deploy-to-k8s:
-  stage: deploy
-  image:
-    name: bitnami/kubectl:latest
-    entrypoint: [""] 
-  script:
-    - kubectl apply -f k8s/nginx-deployment.yml
-    - kubectl apply -f k8s/nginx-service.yml
+# deploy-to-k8s:
+#   stage: deploy
+#   image:
+#     name: bitnami/kubectl:latest
+#     entrypoint: [""] 
+#   script:
+#     - kubectl apply -f k8s/nginx-deployment.yml
+#     - kubectl apply -f k8s/nginx-service.yml
 
-  tags:
-    - my-runner-tag
+#   tags:
+#     - my-runner-tag
