@@ -16,9 +16,7 @@ build:
   script:
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_ACCESS_TOKEN"
     - docker pull "$DOCKER_REGISTRY_IMAGE:latest" || true
-    - echo "Building image with tag: ${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}"
     - docker build --no-cache -t "${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}" .
-    - docker run --rm "${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}" ls /usr/share/nginx/html  # Проверка содержимого
     - docker tag "${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}" "${DOCKER_REGISTRY_IMAGE}:latest"
     - docker push "${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}"
     - docker push "${DOCKER_REGISTRY_IMAGE}:latest"
@@ -33,11 +31,7 @@ deploy:
     name: bitnami/kubectl:latest
     entrypoint: [""] 
   script:
-    - export IMAGE_TAG="${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}"  # Определяем текущий тег образа
-    - echo "Deploying image $IMAGE_TAG"
-    # Подставляем тег в файл deployment.yml
-    - sed -i "s|image:.*|image: $IMAGE_TAG|" deployment.yaml
-    - kubectl apply -f deployment.yaml  
+    - kubectl apply -f deployment.yml  
   only:
     - tags  
     - main
