@@ -5,8 +5,8 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: gitlab-runner-sa
-  namespace: gitlab-runner  # Указываем namespace, где существует сервисный аккаунт
+  namespace: gitlab-runner 
 roleRef:
   kind: ClusterRole
-  name: claster-deploy  # Например, cluster-admin или специфическая роль
+  name: cluster-deploy  
   apiGroup: rbac.authorization.k8s.io
