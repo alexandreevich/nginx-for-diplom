@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gitlab-runner-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: gitlab-runner-sa
+  namespace: gitlab-runner  # Указываем namespace, где существует сервисный аккаунт
+roleRef:
+  kind: ClusterRole
+  name: claster-deploy  # Например, cluster-admin или специфическая роль
+  apiGroup: rbac.authorization.k8s.io
