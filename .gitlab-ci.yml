@@ -34,7 +34,9 @@ deploy:
     name: bitnami/kubectl:latest
     entrypoint: [""]
   script:
-    - kubectl apply -f deployment.yaml -n applica  
+    - export DOCKER_REGISTRY_IMAGE="${DOCKER_USERNAME}/nginx-image"
+    - export DOCKER_IMAGE_TAG="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
+    - envsubst < deployment.yaml | kubectl apply -f -
   only:
     - tags
     - main
