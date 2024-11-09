@@ -25,6 +25,7 @@ build:
     - docker push "${DOCKER_REGISTRY_IMAGE}:${DOCKER_IMAGE_TAG}"
   only:
     - main
+    - tags
   tags:
     - my-runner-tag
 
@@ -41,6 +42,5 @@ deploy:
     - envsubst < deployment.yaml | kubectl apply -f -
   only:
     - tags
-    - main
   tags:
     - my-runner-tag
